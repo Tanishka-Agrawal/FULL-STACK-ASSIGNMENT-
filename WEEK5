@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Week 5 – JavaScript Basics & Arrays</title>
+<style>
+    body { font-family: Arial, sans-serif; padding: 20px; background:#f0f0f0; }
+    h2 { color:#222; }
+    button { padding:10px 15px; background:#007bff; color:#fff; border:none; border-radius:5px; cursor:pointer; }
+    button:hover { background:#0056b3; }
+    pre { background:#fff; padding:15px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+</style>
+</head>
+<body>
+<h1>Week 5 – JavaScript Introduction & Arrays</h1>
+
+<h2>12. Welcome Message Script</h2>
+<button onclick="welcomeUser()">Enter Name</button>
+<script>
+function welcomeUser(){
+    let name = prompt("Enter your name:");
+    alert("Welcome, " + name + "!");
+    document.write("<h3>Welcome, " + name + "!</h3>");
+}
+</script>
+
+<h2>13. Age Eligibility Checker</h2>
+<button onclick="checkAge()">Check Eligibility</button>
+<p id="ageResult"></p>
+<script>
+function checkAge(){
+    let age = prompt("Enter your age:");
+    let result = (age >= 18) ? "You are eligible!" : "You are NOT eligible.";
+    document.getElementById('ageResult').innerText = result;
+}
+</script>
+
+<h2>14. Array Methods Practice (map, filter, reduce, forEach)</h2>
+<pre>
+<script>
+let numbers = [2, 5, 8, 10, 15];
+
+document.write("Original Array: " + numbers + "<br><br>");
+
+let mapResult = numbers.map(n => n * 2);
+document.write("Map (×2): " + mapResult + "<br><br>");
+
+let filterResult = numbers.filter(n => n > 5);
+document.write("Filter (>5): " + filterResult + "<br><br>");
+
+let reduceResult = numbers.reduce((acc, n) => acc + n, 0);
+document.write("Reduce (Sum): " + reduceResult + "<br><br>");
+
+document.write("forEach Output:<br>");
+numbers.forEach(n => document.write(n + " "));
+</script>
+</pre>
+
+</body>
+</html>
