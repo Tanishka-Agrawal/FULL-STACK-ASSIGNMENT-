@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Number Pattern Generator</title>
+  <style>
+    :root{--bg:#0b1220;--card:#071228;--accent:#0ea5a4;--muted:#9fb3c8}
+    *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
+    body{margin:0;min-height:100vh;background:linear-gradient(180deg,var(--bg),#041427);color:#e6f0f6;display:flex;align-items:flex-start;justify-content:center;padding:28px}
+    .wrap{width:100%;max-width:900px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px}
+    h1{margin:0 0 6px 0;font-size:18px}
+    p.sub{margin:0;color:var(--muted);font-size:13px}
+    .grid{display:grid;grid-template-columns:280px 1fr;gap:14px;margin-top:14px}
+    .card{background:var(--card);padding:12px;border-radius:10px}
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+    input,select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    .row{display:flex;gap:8px}
+    .btn{padding:8px 12px;border-radius:8px;background:linear-gradient(90deg,var(--accent),#2dd4bf);border:0;color:#022;cursor:pointer;font-weight:700}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);font-weight:600}
+    .preview{padding:12px;border-radius:8px;min-height:320px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));overflow:auto}
+    pre{margin:0;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace;font-size:14px;line-height:1.3}
+    .line{white-space:pre;display:block}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    .small{font-size:12px;color:var(--muted)}
+    .color-swatch{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;margin-right:6px}
+    @media (max-width:720px){.grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Number Pattern Generator</h1>
+      <p class="sub">Generate triangles, pyramids and diamonds using nested loops. Even/odd row color transitions.</p>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <div style="margin-bottom:10px">
+          <label>Pattern</label>
+          <select id="pattern" aria-label="Pattern type">
+            <option value="leftTriangle">Left Triangle</option>
+            <option value="rightTriangle">Right Triangle</option>
+            <option value="isoscelesPyramid">Isosceles Pyramid</option>
+            <option value="numberDiamond">Number Diamond</option>
+            <option value="palindromePyramid">Palindrome Pyramid</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:10px">
+          <label>Size (rows)</label>
+          <input id="size" type="number" min="1" max="50" value="5" />
+        </div>
+
+        <div style="margin-bottom:10px">
+          <label>Separator</label>
+          <input id="sep" type="text" value=" " maxlength="3" />
+        </div>
+
+        <div style="margin-bottom:10px">
+          <label>Even row color <span class="small">(background)</span></label>
+          <input id="evenColor" type="color" value="#0ea5a4" />
+        </div>
+        <div style="margin-bottom:10px">
+          <label>Odd row color <span class="small">(background)</span></label>
+          <input id="oddColor" type="color" value="#7c3aed" />
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <button id="gen" class="btn">Generate</button>
+          <button id="copy" class="btn ghost">Copy</button>
+          <button id="download" class="btn ghost">Download</button>
+        </div>
+
+        <div style="margin-top:10px" class="small">Tip: Use size 7–15 for diamond/pyramid to see shape clearly.</div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-weight:700">Preview</div>
+            <div class="small">Rows: <span id="showRows">5</span></div>
+          </div>
+
+          <div id="preview" class="preview" aria-live="polite"><pre id="codeArea"><code></code></pre></div>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:10px;align-items:center">
+          <div class="small">Legend:</div>
+          <div><span class="color-swatch" id="swEven"></span><span class="small">even rows</span></div>
+          <div><span class="color-swatch" id="swOdd"></span><span class="small">odd rows</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    const patternSel = document.getElementById('pattern');
+    const sizeInput = document.getElementById('size');
+    const sepInput = document.getElementById('sep');
+    const genBtn = document.getElementById('gen');
+    const codeArea = document.querySelector('#codeArea code');
+    const preview = document.getElementById('preview');
+    const showRows = document.getElementById('showRows');
+    const evenColor = document.getElementById('evenColor');
+    const oddColor = document.getElementById('oddColor');
+    const swEven = document.getElementById('swEven');
+    const swOdd = document.getElementById('swOdd');
+    const copyBtn = document.getElementById('copy');
+    const downloadBtn = document.getElementById('download');
+
+    function updateSwatches(){ swEven.style.background = evenColor.value; swOdd.style.background = oddColor.value; }
+    updateSwatches(); evenColor.addEventListener('input', updateSwatches); oddColor.addEventListener('input', updateSwatches);
+
+    function padLeft(str, totalWidth, padChar=' '){ str = String(str); if(str.length >= totalWidth) return str; return padChar.repeat(totalWidth - str.length) + str; }
+
+    // pattern implementations using nested loops
+    function leftTriangle(n, sep){
+      const lines = [];
+      for(let r=1;r<=n;r++){
+        let row = [];
+        for(let c=1;c<=r;c++) row.push(c);
+        lines.push(row.join(sep));
+      }
+      return lines;
+    }
+
+    function rightTriangle(n, sep){
+      const lines = [];
+      const width = n;
+      for(let r=1;r<=n;r++){
+        let row = [];
+        // padding spaces
+        const pads = width - r;
+        for(let p=0;p<pads;p++) row.push(' '.repeat(sep.length));
+        for(let c=1;c<=r;c++) row.push(c);
+        lines.push(row.join(sep));
+      }
+      return lines;
+    }
+
+    function isoscelesPyramid(n, sep){
+      const lines = [];
+      for(let r=1;r<=n;r++){
+        const nums = [];
+        for(let space=0; space < n - r; space++) nums.push(' ');
+        for(let k=1;k<=r;k++) nums.push(k);
+        for(let k=r-1;k>=1;k--) nums.push(k);
+        lines.push(nums.join(sep));
+      }
+      return lines;
+    }
+
+    function numberDiamond(n, sep){
+      const lines = [];
+      // top pyramid
+      for(let r=1;r<=n;r++){
+        const nums = [];
+        for(let space=0; space < n - r; space++) nums.push(' ');
+        for(let k=1;k<=r;k++) nums.push(k);
+        for(let k=r-1;k>=1;k--) nums.push(k);
+        lines.push(nums.join(sep));
+      }
+      // bottom inverted
+      for(let r=n-1;r>=1;r--){
+        const nums = [];
+        for(let space=0; space < n - r; space++) nums.push(' ');
+        for(let k=1;k<=r;k++) nums.push(k);
+        for(let k=r-1;k>=1;k--) nums.push(k);
+        lines.push(nums.join(sep));
+      }
+      return lines;
+    }
+
+    function palindromePyramid(n, sep){
+      const lines = [];
+      for(let r=1;r<=n;r++){
+        const left = [];
+        for(let i=r;i>=1;i--) left.push(i);
+        const right = [];
+        for(let i=2;i<=r;i++) right.push(i);
+        const row = [];
+        for(let s=0;s<n-r;s++) row.push(' ');
+        row.push(...left, ...right);
+        lines.push(row.join(sep));
+      }
+      return lines;
+    }
+
+    function generate(){
+      const type = patternSel.value;
+      let n = parseInt(sizeInput.value,10) || 5; if(n<1) n=1; if(n>50) n=50;
+      const sep = sepInput.value === '' ? ' ' : sepInput.value;
+      showRows.textContent = n;
+
+      let lines = [];
+      if(type === 'leftTriangle') lines = leftTriangle(n, sep);
+      else if(type === 'rightTriangle') lines = rightTriangle(n, sep);
+      else if(type === 'isoscelesPyramid') lines = isoscelesPyramid(n, sep);
+      else if(type === 'numberDiamond') lines = numberDiamond(n, sep);
+      else if(type === 'palindromePyramid') lines = palindromePyramid(n, sep);
+
+      render(lines);
+    }
+
+    function render(lines){
+      // clear preview
+      codeArea.innerHTML = '';
+      const even = evenColor.value; const odd = oddColor.value;
+      // figure out visual padding to align using a monospace-like approach
+      const maxLen = lines.reduce((m,l)=>Math.max(m, String(l).length),0);
+      lines.forEach((line, idx)=>{
+        const row = document.createElement('div');
+        row.className = 'line';
+        const bg = (idx%2===0) ? even : odd; // 0-based: even rows are idx 0,2..
+        row.style.background = hexToRgba(bg, 0.08);
+        row.style.padding = '6px';
+        row.style.borderRadius = '6px';
+        row.style.marginBottom = '4px';
+        row.textContent = padRight(line, maxLen);
+        codeArea.appendChild(row);
+      });
+
+      // accessibility: announce
+      preview.setAttribute('aria-label', `Generated pattern with ${lines.length} lines`);
+    }
+
+    function padRight(s, width, padChar=' '){ s = String(s); if(s.length>=width) return s; return s + padChar.repeat(width - s.length); }
+
+    function hexToRgba(hex, alpha){
+      const h = hex.replace('#',''); const bigint = parseInt(h,16);
+      const r = (bigint >> 16) & 255; const g = (bigint >> 8) & 255; const b = bigint & 255;
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    genBtn.addEventListener('click', generate);
+    // generate on enter in size or sep
+    sizeInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') generate(); });
+    sepInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') generate(); });
+
+    copyBtn.addEventListener('click', ()=>{
+      const text = Array.from(document.querySelectorAll('#codeArea .line')).map(n=>n.textContent).join('\n');
+      navigator.clipboard.writeText(text).then(()=>{ copyBtn.textContent = 'Copied!'; setTimeout(()=>copyBtn.textContent='Copy',800); });
+    });
+
+    downloadBtn.addEventListener('click', ()=>{
+      const text = Array.from(document.querySelectorAll('#codeArea .line')).map(n=>n.textContent).join('\n');
+      const blob = new Blob([text], {type:'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'pattern.txt'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    // initial generate
+    generate();
+
+    // expose functions to window for debugging
+    window._patternGen = { generate };
+  })();
+  </script>
+</body>
+</html>
