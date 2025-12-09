@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Week 7 – Event Handling & Async JS</title>
+<style>
+body { font-family: Arial; padding:20px; background:#f4f4f4; }
+section { background:#fff; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); margin-bottom:25px; }
+#mainImage { width:280px; border-radius:10px; }
+.thumb { width:100px; cursor:pointer; border-radius:8px; margin-right:10px; }
+#result { background:#e9e9e9; padding:15px; border-radius:8px; margin-top:10px; }
+</style>
+</head>
+<body>
+<h1>Week 7 – Event Handling, Gallery & Async JavaScript</h1>
+
+<!-- Task 17 -->
+<section>
+<h2>17. Thumbnail Gallery (Event Delegation)</h2>
+<div id="thumbContainer">
+    <img class="thumb" src="https://via.placeholder.com/100/ff4444" data-big="https://via.placeholder.com/300/ff4444">
+    <img class="thumb" src="https://via.placeholder.com/100/44ff44" data-big="https://via.placeholder.com/300/44ff44">
+    <img class="thumb" src="https://via.placeholder.com/100/4444ff" data-big="https://via.placeholder.com/300/4444ff">
+</div>
+<br>
+<img id="mainImage" src="https://via.placeholder.com/300/ff4444" />
+
+<script>
+document.getElementById("thumbContainer").addEventListener("click", function(e){
+    if(e.target.classList.contains("thumb")){
+        document.getElementById("mainImage").src = e.target.getAttribute("data-big");
+    }
+});
+</script>
+</section>
+
+<!-- Task 18 -->
+<section>
+<h2>18. Simulated Data Fetch (setTimeout + Promise)</h2>
+<button onclick="loadData()">Fetch Data</button>
+<div id="result"></div>
+
+<script>
+function fakeFetch(){
+    return new Promise((resolve)=>{
+        setTimeout(()=>{
+            resolve({ id: 1, name: "Sample User", status: "Success" });
+        }, 2000);
+    });
+}
+
+function loadData(){
+    document.getElementById("result").innerText = "Loading...";
+
+    fakeFetch().then(data => {
+        document.getElementById("result").innerText = JSON.stringify(data, null, 2);
+    });
+}
+</script>
+</section>
+
+</body>
+</html>
