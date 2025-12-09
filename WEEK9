@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Week 9 – Advanced DOM Apps</title>
+<style>
+  body { font-family: Arial; padding: 20px; }
+
+  /* --- TO-DO STYLES --- */
+  #todo-container { margin-bottom: 40px; }
+  li { margin: 8px 0; display: flex; gap: 10px; align-items: center; }
+  button { padding: 4px 8px; cursor: pointer; }
+
+  /* --- CHESSBOARD STYLES --- */
+  #board {
+    display: grid;
+    grid-template-columns: repeat(8, 50px);
+    width: 400px;
+    height: 400px;
+    border: 2px solid black;
+    margin-top: 20px;
+  }
+  .cell {
+    width: 50px;
+    height: 50px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ------------------ TO-DO APP ------------------ -->
+<div id="todo-container">
+  <h2>Feature-Rich To-Do List</h2>
+
+  <input id="taskInput" type="text" placeholder="Enter task">
+  <button onclick="addTask()">Add</button>
+
+  <ul id="list"></ul>
+</div>
+
+<!-- ------------------ CHESSBOARD ------------------ -->
+<h2>Chessboard Generated with JavaScript</h2>
+<div id="board"></div>
+
+<script>
+/* -------------------- TO-DO LOGIC -------------------- */
+function addTask() {
+    const input = document.getElementById("taskInput");
+    const taskText = input.value.trim();
+    if (!taskText) return;
+
+    const li = document.createElement("li");
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+
+    const span = document.createElement("span");
+    span.innerText = taskText;
+
+    const upBtn = document.createElement("button");
+    upBtn.innerText = "↑";
+    upBtn.onclick = () =>
+        li.previousElementSibling?.before(li);
+
+    const downBtn = document.createElement("button");
+    downBtn.innerText = "↓";
+    downBtn.onclick = () =>
+        li.nextElementSibling?.after(li);
+
+    const delBtn = document.createElement("button");
+    delBtn.innerText = "Delete";
+    delBtn.onclick = () => li.remove();
+
+    li.append(checkbox, span, upBtn, downBtn, delBtn);
+    document.getElementById("list").appendChild(li);
+
+    input.value = "";
+}
+
+/* -------------------- CHESSBOARD LOGIC -------------------- */
+const board = document.getElementById("board");
+
+for (let row = 0; row < 8; row++) {
+  for (let col = 0; col < 8; col++) {
+    const cell = document.createElement("div");
+    cell.classList.add("cell");
+
+    cell.style.background = (row + col) % 2 === 0 ? "#fff" : "#000";
+
+    board.appendChild(cell);
+  }
+}
+</script>
+
+</body>
+</html>
