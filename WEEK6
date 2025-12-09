@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Week 6 – Functions, Closures & DOM</title>
+<style>
+    body { font-family: Arial, sans-serif; padding: 20px; background:#eef1f5; }
+    h2 { color:#222; }
+    .todo-container { background:#fff; padding:20px; border-radius:10px; width:350px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+    input { padding:8px; width:70%; border:1px solid #ccc; border-radius:5px; }
+    button { padding:8px 12px; background:#28a745; color:#fff; border:none; border-radius:5px; cursor:pointer; }
+    button:hover { background:#1f7e34; }
+    ul { margin-top:10px; list-style:none; padding:0; }
+    li { background:#f0f0f0; padding:10px; border-radius:6px; margin:5px 0; display:flex; justify-content:space-between; }
+    .del { background:red; color:#fff; padding:5px 10px; border-radius:4px; cursor:pointer; }
+</style>
+</head>
+<body>
+<h1>Week 6 – Functions, Closures & DOM Basics</h1>
+
+<h2>15. Closure, IIFE & Function Questions</h2>
+<pre>
+// IIFE
+(function(){
+    console.log("This runs instantly!");
+})();
+
+// Closure example
+function outer(){
+    let count = 0;
+    return function(){ count++; console.log(count); };
+}
+let counter = outer();
+counter(); // 1
+counter(); // 2
+
+// Function scope
+function test(){
+    var x = 10;
+    if(true){ let y = 20; }
+}
+</pre>
+
+<h2>16. To-Do List App (DOM Manipulation)</h2>
+<div class="todo-container">
+    <h3>To-Do List</h3>
+    <input id="todoInput" placeholder="Enter task..." />
+    <button onclick="addTask()">Add</button>
+    <ul id="todoList"></ul>
+</div>
+
+<script>
+function addTask(){
+    let input = document.getElementById('todoInput');
+    let task = input.value.trim();
+    if(task === "") return;
+
+    let li = document.createElement('li');
+    li.textContent = task;
+
+    let del = document.createElement('span');
+    del.textContent = "Delete";
+    del.className = 'del';
+
+    del.onclick = () => li.remove();
+
+    li.appendChild(del);
+    document.getElementById('todoList').appendChild(li);
+
+    input.value = "";
+}
+</script>
+
+</body>
+</html>
