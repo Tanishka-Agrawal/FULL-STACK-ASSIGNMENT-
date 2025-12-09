@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week 2 – CSS Selectors & Styling</title>
+
+  <style>
+    /* ========= Element Selector ========= */
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+
+    section {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* ========= Class Selector ========= */
+    .highlight {
+      background-color: rgb(230, 245, 255);
+      border-left: 4px solid #0077cc;
+      padding: 10px;
+    }
+
+    /* ========= ID Selector ========= */
+    #mission {
+      background-color: rgba(255, 200, 0, 0.2);
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    /* ========= Attribute Selector ========= */
+    a[target="_blank"] {
+      color: hsl(200, 70%, 40%);
+      font-weight: bold;
+    }
+
+    /* ========= Pseudo-Class Selectors ========= */
+    a:hover {
+      color: #cc0000;
+      text-decoration: underline;
+    }
+
+    li:hover {
+      background: rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+    }
+
+    /* ========= Pseudo-Element Selectors ========= */
+    p::first-letter {
+      font-size: 2rem;
+      color: #ff6600;
+      font-weight: bold;
+    }
+
+    p::selection {
+      background: #000;
+      color: #fff;
+    }
+
+    /* ========= Styled Movie List ========= */
+    ul.movies {
+      list-style: square;
+      padding-left: 20px;
+    }
+
+    .favorite {
+      color: #ff0066;
+      font-weight: bold;
+      background: rgba(255, 0, 102, 0.1);
+      padding: 5px;
+      border-radius: 6px;
+    }
+
+    /* ========= Styled City List ========= */
+    ol.cities {
+      list-style: upper-roman;
+      padding-left: 20px;
+    }
+
+    /* Random custom styling */
+    .cities li {
+      font-size: 1.1rem;
+      margin: 5px 0;
+      padding: 6px;
+      border-radius: 5px;
+      background: hsl(120, 70%, 90%);
+      border-left: 4px solid hsl(120, 60%, 40%);
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>About Us – Styled Page</h1>
+
+  <!-- About Us Section with Selectors -->
+  <section>
+    <h2>Who We Are</h2>
+    <p class="highlight">
+      We are a creative tech company focused on delivering innovative digital
+      products with strong design and performance.
+    </p>
+
+    <h3>Our Mission</h3>
+    <p id="mission">
+      To make technology simple, accessible, and enjoyable for everyone.
+    </p>
+
+    <p>
+      Learn more about us on our
+      <a href="https://example.com" target="_blank">official website</a>.
+    </p>
+  </section>
+
+  <!-- Movie List Section -->
+  <section>
+    <h2>My Favorite Movies</h2>
+    <ul class="movies">
+      <li>Interstellar</li>
+      <li class="favorite">Inception (Favorite)</li>
+      <li>Avengers: Endgame</li>
+      <li>3 Idiots</li>
+    </ul>
+  </section>
+
+  <!-- City List Section -->
+  <section>
+    <h2>Cities I Want to Visit</h2>
+    <ol class="cities">
+      <li>Tokyo</li>
+      <li>New York</li>
+      <li>London</li>
+      <li>Dubai</li>
+    </ol>
+  </section>
+
+</body>
+</html>
