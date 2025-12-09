@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Week 1 – HTML Semantic Portfolio & Timetable</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      background: #333;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    main {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    section {
+      margin-bottom: 30px;
+    }
+
+    figure {
+      text-align: center;
+    }
+
+    figure img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    table, th, td {
+      border: 1px solid #333;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+
+    tfoot td {
+      background: #e8e8e8;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>My Semantic Portfolio</h1>
+  </header>
+
+  <main>
+    <!-- Personal Portfolio Section -->
+    <section>
+      <h2>Personal Profile</h2>
+
+      <figure>
+        <img src="profile.jpg" alt="Profile Photo" />
+        <figcaption>My Profile Picture</figcaption>
+      </figure>
+
+      <article>
+        <h3>About Me</h3>
+        <p>
+          Hello! I am a front-end developer enthusiastic about web design, UI/UX,
+          and building clean, responsive interfaces.
+        </p>
+      </article>
+
+      <article>
+        <h3>Education</h3>
+        <ul>
+          <li>Bachelor of Computer Applications – 2025</li>
+          <li>Senior Secondary – 2022</li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>Skills</h3>
+        <ul>
+          <li>HTML5</li>
+          <li>CSS3</li>
+          <li>JavaScript</li>
+          <li>Responsive Design</li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>Contact Info</h3>
+        <p>Email: example@mail.com</p>
+        <p>Phone: +91 XXXXX XXXXX</p>
+      </article>
+    </section>
+
+    <!-- Timetable Section -->
+    <section>
+      <h2>Academic Timetable</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>9–10 AM</th>
+            <th>10–11 AM</th>
+            <th>11–12 PM</th>
+            <th>1–2 PM</th>
+            <th>2–3 PM</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Monday</td>
+            <td>HTML</td>
+            <td>CSS</td>
+            <td>Break</td>
+            <td>JavaScript</td>
+            <td>Project Work</td>
+          </tr>
+          <tr>
+            <td>Tuesday</td>
+            <td>DSA</td>
+            <td>HTML</td>
+            <td>Break</td>
+            <td>CSS</td>
+            <td>Lab</td>
+          </tr>
+          <tr>
+            <td>Wednesday</td>
+            <td>React</td>
+            <td>JavaScript</td>
+            <td>Break</td>
+            <td>UI/UX</td>
+            <td>Workshop</td>
+          </tr>
+        </tbody>
+
+        <tfoot>
+          <tr>
+            <td colspan="6">Weekly Schedule – Front-End Development</td>
+          </tr>
+        </tfoot>
+      </table>
+    </section>
+  </main>
+</body>
+</html>
