@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Array / Stack / Queue Visualizer</title>
+  <style>
+    :root{
+      --bg:#0f1724;
+      --panel:#0b1220;
+      --accent:#7c3aed;
+      --muted:#94a3b8;
+      --card:#0b1220;
+      --glass: rgba(255,255,255,0.03);
+    }
+    *{box-sizing:border-box;font-family:Inter,ui-sans-serif,-apple-system,system-ui,'Segoe UI',Roboto,'Helvetica Neue',Arial}
+    html,body{height:100%;}
+    body{
+      margin:0;background:linear-gradient(180deg,var(--bg),#071023);color:#e6eef8;display:flex;align-items:flex-start;justify-content:center;padding:28px;
+    }
+
+    .app{
+      width:100%;max-width:1100px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:20px;box-shadow:0 10px 30px rgba(2,6,23,0.7);
+    }
+
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    header h1{margin:0;font-size:18px;letter-spacing:0.2px}
+    header p{margin:0;color:var(--muted);font-size:13px}
+
+    .controls{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+    .card{background:var(--card);padding:12px;border-radius:10px;min-width:220px}
+
+    .mode-row{display:flex;gap:8px;align-items:center}
+    .mode-row label{font-size:13px;color:var(--muted)}
+    .select, .input, .btn{appearance:none;border:0;background:transparent;color:inherit}
+    .select{padding:8px;border-radius:8px;background:var(--glass);min-width:140px}
+
+    .input-wrap{display:flex;gap:8px;align-items:center}
+    .input{padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);min-width:110px}
+
+    .btn{padding:8px 12px;border-radius:8px;background:linear-gradient(90deg,var(--accent),#4c1d95);cursor:pointer;color:white;font-weight:600}
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);font-weight:500}
+
+    .visual-area{margin-top:18px;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));border-radius:10px;min-height:220px;display:flex;flex-direction:column;gap:12px}
+
+    .structure{
+      border:1px dashed rgba(255,255,255,0.04);padding:14px;border-radius:8px;display:flex;flex-direction:column;gap:12px;background:linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.00));
+    }
+
+    .row{display:flex;align-items:center;gap:12px}
+    .label{min-width:80px;color:var(--muted);font-size:13px}
+
+    .canvas{display:flex;gap:8px;flex-wrap:nowrap;overflow:auto;padding:8px;min-height:80px;align-items:center}
+    .item{min-width:72px;height:56px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:0 8px 18px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03);transform-origin:center;transition:transform var(--dur) cubic-bezier(.18,.82,.1,1),opacity var(--dur) ease, box-shadow 120ms}
+    .item.small{min-width:48px;height:44px;font-size:13px}
+    .item.adding{transform:translateY(-18px) scale(1.06);box-shadow:0 18px 35px rgba(4,6,30,0.6)}
+    .item.removing{opacity:0;transform:translateY(10px) scale(0.9)}
+
+    .pointer{font-size:12px;color:var(--muted);text-align:center;margin-top:6px}
+
+    /* markers for head and tail */
+    .marker{font-size:11px;padding:4px 6px;border-radius:6px;background:rgba(255,255,255,0.03);color:var(--muted);border:1px solid rgba(255,255,255,0.02)}
+
+    .log{background:rgba(0,0,0,0.14);padding:10px;border-radius:8px;color:var(--muted);font-size:13px;height:90px;overflow:auto}
+
+    footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+    .small{font-size:12px;color:var(--muted)}
+
+    /* responsiveness */
+    @media (max-width:720px){
+      .controls{flex-direction:column}
+      .card{width:100%}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div>
+      <h1>Data Structure Visualizer</h1>
+      <p>Visualize arrays, stacks and queues. Pure HTML/CSS/JS, single file.</p>
+    </div>
+    <div class="small">Animation speed: <span id="speedLabel">400ms</span></div>
+  </header>
+
+  <div class="controls">
+    <div class="card">
+      <div class="mode-row" style="margin-bottom:8px">
+        <label class="label">Structure</label>
+        <select id="structureSelect" class="select" aria-label="Choose structure">
+          <option value="array">Array</option>
+          <option value="stack">Stack (LIFO)</option>
+          <option value="queue">Queue (FIFO)</option>
+        </select>
+      </div>
+
+      <div class="mode-row">
+        <label class="label">Value</label>
+        <input id="valueInput" class="input" placeholder="e.g. 42 or hello" />
+        <button id="pushBtn" class="btn">Add</button>
+        <button id="popBtn" class="btn secondary">Remove</button>
+      </div>
+
+      <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+        <button id="shiftBtn" class="btn secondary">Shift</button>
+        <button id="unshiftBtn" class="btn secondary">Unshift</button>
+        <button id="clearBtn" class="btn secondary">Clear</button>
+      </div>
+    </div>
+
+    <div class="card" style="flex:1;min-width:360px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-weight:700">Visualization</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="speed" type="range" min="80" max="1200" value="400" />
+        </div>
+      </div>
+
+      <div class="structure" aria-live="polite">
+        <div class="row">
+          <div class="label">Contents</div>
+          <div id="canvas" class="canvas" role="list" aria-label="Data structure contents" style="--dur:400ms"></div>
+        </div>
+        <div id="markers" class="row" style="justify-content:flex-start"></div>
+      </div>
+    </div>
+
+    <div class="card" style="min-width:260px;display:flex;flex-direction:column;gap:8px">
+      <div style="font-weight:700">Actions Log</div>
+      <div id="log" class="log"></div>
+    </div>
+  </div>
+
+  <div class="visual-area">
+    <div class="row">
+      <div class="label">Quick Ops</div>
+      <div style="display:flex;gap:8px">
+        <button id="fillRandom" class="btn secondary">Fill Random (5)</button>
+        <button id="reverseBtn" class="btn secondary">Reverse</button>
+        <button id="sortBtn" class="btn secondary">Sort (lexicographic)</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="label">State</div>
+      <div class="small">Length: <span id="length">0</span></div>
+      <div class="small">Operation: <span id="op">idle</span></div>
+    </div>
+
+    <footer>
+      <div class="small">Tip: In <strong>Stack</strong> mode 'Add' = push, 'Remove' = pop. In <strong>Queue</strong> mode 'Add' = enqueue (push to tail), 'Remove' = dequeue (shift from head).</div>
+      <div class="small">Made with ♥ — single-file visualizer</div>
+    </footer>
+  </div>
+</div>
+
+<script>
+(function(){
+  // Core state
+  const state = { arr: [], mode: 'array', animDuration: 400 };
+
+  // DOM
+  const canvas = document.getElementById('canvas');
+  const structureSelect = document.getElementById('structureSelect');
+  const valueInput = document.getElementById('valueInput');
+  const pushBtn = document.getElementById('pushBtn');
+  const popBtn = document.getElementById('popBtn');
+  const shiftBtn = document.getElementById('shiftBtn');
+  const unshiftBtn = document.getElementById('unshiftBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const logEl = document.getElementById('log');
+  const lengthEl = document.getElementById('length');
+  const opEl = document.getElementById('op');
+  const speed = document.getElementById('speed');
+  const speedLabel = document.getElementById('speedLabel');
+  const markers = document.getElementById('markers');
+  const reverseBtn = document.getElementById('reverseBtn');
+  const sortBtn = document.getElementById('sortBtn');
+  const fillRandom = document.getElementById('fillRandom');
+
+  function log(msg){
+    const time = new Date().toLocaleTimeString();
+    logEl.innerHTML = `<div>[${time}] ${escapeHtml(msg)}</div>` + logEl.innerHTML;
+  }
+  function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function setOp(text){ opEl.textContent = text; }
+  function setLength(){ lengthEl.textContent = state.arr.length; }
+
+  function renderMarkers(){
+    markers.innerHTML = '';
+    if(state.mode === 'queue' || state.mode === 'stack'){
+      if(state.arr.length>0){
+        const head = document.createElement('div'); head.className='marker'; head.textContent='head'; markers.appendChild(head);
+        const space = document.createElement('div'); space.style.width='8px'; markers.appendChild(space);
+        const tail = document.createElement('div'); tail.className='marker'; tail.textContent= state.mode==='queue'? 'tail' : 'top'; markers.appendChild(tail);
+      }
+    }
+  }
+
+  function updateView(animated=true){
+    // update speed custom property
+    canvas.style.setProperty('--dur', state.animDuration + 'ms');
+
+    // Render items. We'll diff simple: if number changed quickly animate add/remove
+    const old = Array.from(canvas.children).map(n=>n.dataset.valueRaw);
+    const now = state.arr.map(x=>String(x));
+
+    canvas.innerHTML = '';
+    now.forEach((v,i)=>{
+      const el = document.createElement('div');
+      el.className = 'item';
+      el.dataset.index = i;
+      el.dataset.valueRaw = v;
+      el.setAttribute('role','listitem');
+      el.innerHTML = `<div>${escapeHtml(v)}</div>`;
+      canvas.appendChild(el);
+    });
+
+    setLength();
+    renderMarkers();
+  }
+
+  // helpers to animate add/remove (simple)
+  function animateAddAt(index, value){
+    const el = document.createElement('div'); el.className='item adding'; el.dataset.valueRaw = String(value); el.innerHTML = `<div>${escapeHtml(value)}</div>`;
+    if(index >= canvas.children.length) canvas.appendChild(el); else canvas.insertBefore(el, canvas.children[index]);
+    // force reflow then remove adding class
+    void el.offsetWidth;
+    setTimeout(()=> el.classList.remove('adding'), 20);
+    setTimeout(()=> updateView(false), state.animDuration + 80);
+  }
+
+  function animateRemoveAt(index){
+    const target = canvas.children[index];
+    if(!target){ updateView(false); return; }
+    target.classList.add('removing');
+    setTimeout(()=> updateView(false), state.animDuration + 80);
+  }
+
+  // operations
+  function pushValue(val){
+    setOp('add');
+    if(state.mode === 'stack' || state.mode === 'array' || state.mode === 'queue'){
+      state.arr.push(val);
+      log(`${state.mode}: added '${val}'`);
+      // animate add at tail
+      animateAddAt(state.arr.length-1, val);
+    }
+  }
+
+  function popValue(){
+    if(state.arr.length === 0){ log('nothing to remove'); return; }
+    setOp('remove');
+    if(state.mode === 'stack'){
+      // pop from tail
+      const v = state.arr.pop(); log(`stack: popped '${v}'`);
+      animateRemoveAt(state.arr.length);
+    } else if(state.mode === 'queue'){
+      // dequeue from head
+      const v = state.arr.shift(); log(`queue: dequeued '${v}'`);
+      animateRemoveAt(0);
+    } else { // array default pop
+      const v = state.arr.pop(); log(`array: popped '${v}'`);
+      animateRemoveAt(state.arr.length);
+    }
+  }
+
+  function shiftOp(){
+    if(state.arr.length === 0){ log('nothing to shift'); return; }
+    const v = state.arr.shift(); log(`${state.mode}: shifted '${v}'`);
+    setOp('shift');
+    animateRemoveAt(0);
+  }
+  function unshiftOp(val){
+    state.arr.unshift(val); log(`${state.mode}: unshifted '${val}'`);
+    setOp('unshift');
+    animateAddAt(0, val);
+  }
+
+  // UI event wiring
+  pushBtn.addEventListener('click', ()=>{
+    const v = valueInput.value.trim();
+    if(v === ''){ valueInput.focus(); return; }
+    if(state.mode === 'stack'){
+      pushValue(v);
+    } else if(state.mode === 'queue'){
+      pushValue(v); // enqueue at tail
+    } else {
+      pushValue(v);
+    }
+    valueInput.value=''; valueInput.focus();
+  });
+
+  popBtn.addEventListener('click', ()=>{
+    popValue();
+  });
+
+  shiftBtn.addEventListener('click', ()=>{
+    shiftOp();
+  });
+  unshiftBtn.addEventListener('click', ()=>{
+    const v = valueInput.value.trim();
+    if(v===''){ valueInput.focus(); return; }
+    unshiftOp(v); valueInput.value=''; valueInput.focus();
+  });
+  clearBtn.addEventListener('click', ()=>{
+    state.arr = [];
+    log('cleared structure');
+    setOp('clear');
+    updateView(false);
+  });
+
+  structureSelect.addEventListener('change', (e)=>{
+    state.mode = e.target.value;
+    log('switched to ' + state.mode);
+    setOp('idle');
+    updateView(false);
+  });
+
+  speed.addEventListener('input', (e)=>{
+    state.animDuration = Number(e.target.value);
+    speedLabel.textContent = state.animDuration + 'ms';
+    canvas.style.setProperty('--dur', state.animDuration + 'ms');
+  });
+
+  reverseBtn.addEventListener('click', ()=>{
+    state.arr.reverse(); log('reversed'); updateView(true);
+  });
+  sortBtn.addEventListener('click', ()=>{
+    state.arr.sort(); log('sorted (lexicographic)'); updateView(true);
+  });
+  fillRandom.addEventListener('click', ()=>{
+    const n = 5; const vals = [];
+    for(let i=0;i<n;i++) vals.push(Math.floor(Math.random()*90)+10);
+    state.arr.push(...vals);
+    log('filled random ' + JSON.stringify(vals));
+    updateView(true);
+  });
+
+  // keyboard: Enter to add
+  valueInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ pushBtn.click(); }});
+
+  // initial render
+  updateView(false);
+
+  // accessible: announce updates
+  const observer = new MutationObserver(()=>{
+    // simple announcement of last action
+  });
+  observer.observe(canvas,{childList:true,subtree:false});
+
+  // expose for console debugging
+  window.__dsvis = { state, updateView };
+
+})();
+</script>
+</body>
+</html>
