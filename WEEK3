@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Week 3 – Layouts: Sidebar, Product Card, Flexbox Blog</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    /* ---------------- Sidebar Layout ---------------- */
+    .sidebar-container {
+      display: flex;
+    }
+
+    .sidebar {
+      width: 220px;
+      background: #333;
+      color: white;
+      padding: 20px;
+      height: 100%;
+      border-radius: 8px;
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      margin: 10px 0;
+    }
+
+    .content {
+      margin-left: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      flex-grow: 1;
+    }
+
+    /* Responsive Sidebar */
+    @media (max-width: 768px) {
+      .sidebar-container {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+      }
+      .content {
+        margin-left: 0;
+        margin-top: 20px;
+      }
+    }
+
+    /* ---------------- Product Card ---------------- */
+    .product-card {
+      width: 260px;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    .product-card img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .product-card button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      border: none;
+      background: #007bff;
+      color: white;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* ---------------- Flexbox Blog Layout ---------------- */
+    .blog-container {
+      display: flex;
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .blog-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      flex: 1;
+    }
+
+    .blog-card h3 {
+      margin-top: 0;
+    }
+
+    /* Mobile Responsive 3-column to 1-column */
+    @media (max-width: 768px) {
+      .blog-container {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Week 3 – Layouts & Responsive Design</h1>
+
+  <!-- Sidebar Layout -->
+  <section>
+    <h2>Responsive Sidebar</h2>
+    <div class="sidebar-container">
+      <div class="sidebar">
+        <h3>Menu</h3>
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Services</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="content">
+        <h3>Welcome</h3>
+        <p>A responsive sidebar built using div and CSS Flexbox layout.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Card -->
+  <section>
+    <h2>E-commerce Product Card</h2>
+    <div class="product-card">
+      <img src="https://via.placeholder.com/260x200" alt="Product" />
+      <h3>Wireless Headphones</h3>
+      <p>High-quality sound with noise cancellation.</p>
+      <button>Buy Now</button>
+    </div>
+  </section>
+
+  <!-- Blog Layout -->
+  <section>
+    <h2>Responsive Blog Layout (3-Column Flexbox)</h2>
+    <div class="blog-container">
+      <div class="blog-card">
+        <h3>Blog Post 1</h3>
+        <p>Intro to Front-End Development and modern UI designs.</p>
+      </div>
+
+      <div class="blog-card">
+        <h3>Blog Post 2</h3>
+        <p>Understanding CSS Flexbox and responsive layout techniques.</p>
+      </div>
+
+      <div class="blog-card">
+        <h3>Blog Post 3</h3>
+        <p>Best practices for writing clean, semantic HTML code.</p>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>
